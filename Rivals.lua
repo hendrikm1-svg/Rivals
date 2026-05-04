@@ -1,190 +1,139 @@
-local Loader = {}
-Loader.__index = Loader
+local Players = game:GetService("Players")  
+local RunService = game:GetService("RunService")  
+local LocalPlayer = Players.LocalPlayer  
+local Camera = workspace.CurrentCamera  
 
-function Loader.new(cfg)
-    local self = setmetatable({}, Loader)
-    self.cfg = cfg
-    local fluentOk, fluentLib = pcall(function()
-        return loadstring(game:HttpGet("https://raw.githubusercontent.com/hendrikm1-svg/Rivals/refs/heads/main/Rivals.lua"))()
-    end)
-    if not fluentOk or not fluentLib then
-        warn("[Script Loader] Failed to load Fluent UI library!")
-        return self
-    end
-    self.libs = { Fluent = fluentLib }
-    self:_initUI()
-    return self
-end
 
-function Loader:_initUI()
-    if not self.libs.Fluent then
-        warn("[Script Loader] Fluent UI not available, cannot create window.")
-        return
-    end
-    local win = self.libs.Fluent:CreateWindow(self.cfg.Window)
-    if not win then
-        warn("[Script Loader] Failed to create Fluent window.")
-        return
-    end
-    self.window = win
-    self.tabs = {
-        Scripts = win:AddTab({ Title = "Scripts", Icon = "list" }),
-        Info = win:AddTab({ Title = "Info", Icon = "info" })
-    }
-    self:_addScriptButtons()
-    self:_addInfo()
-end
+local ScreenGui = Instance.new("ScreenGui")  
+ScreenGui.Parent = game.CoreGui  
 
-function Loader:_addScriptButtons()
-    local scripts = self.cfg.Scripts
-    for i = 1, #scripts do
-        local script = scripts[i]
-        self.tabs.Scripts:AddButton({
-            Title = script.Name,
-            Description = "Click to load " .. script.Name,
-            Tooltip = script.Url,
-            Callback = function()
-                self:_loadScript(script.Url)
-            end
-        })
-    end
-end
+local MainFrame = Instance.new("Frame")  
+MainFrame.Size = UDim2.new(0, 300, 0, 200)  
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)  
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)  
+MainFrame.Active = true  
+MainFrame.Draggable = true  
+MainFrame.Parent = ScreenGui  
 
-function Loader:_loadScript(url)
-    self.libs.Fluent:Notify({ Title = "Loading...", Content = url, Duration = 3 })
-    if self.window and self.window.Destroy then
-        self.window:Destroy()
-    end
-    if self.libs.Fluent and self.libs.Fluent.Unload then
-        self.libs.Fluent:Unload()
-    end
-    local ok, err = pcall(function()
-        loadstring(game:HttpGet(url))()
-    end)
-    if not ok then
-        warn("[Script Loader Error]", err)
-    end
-end
+local Title = Instance.new("TextLabel")  
+Title.Text = "Rivals Cheat (Drag Me)"  
+Title.Size = UDim2.new(1, 0, 0, 30)  
+Title.BackgroundColor3 = Color3.fromRGB(60, 60, 60)  
+Title.TextColor3 = Color3.new(1, 1, 1)  
+Title.Parent = MainFrame  
 
-function Loader:_addInfo()
-    self.tabs.Info:AddParagraph({
-        Title = "About",
-        Content = "Script Loader by @Henry_861\nGitHub:https://github.com/hendrikm1-svg/Rivals.git
-        
-end
+local ToggleButton = Instance.new("TextButton")  
+ToggleButton.Text = "Minimize"  
+ToggleButton.Size = UDim2.new(0, 80, 0, 25)  
+ToggleButton.Position = UDim2.new(1, -85, 0, 5)  
+ToggleButton.Parent = MainFrame  
 
-local Config = {
-    Window = {
-        Title        = "MrVevon Hub Loader",
-        SubTitle     = "Loader by @MrVevon | Scripts by @Henry_861",
-        TabWidth     = 160,
-        Size         = UDim2.fromOffset(580, 460),
-        Acrylic      = true,
-        Theme        = "Dark",
-        MinimizeKey  = Enum.KeyCode.LeftControl
-    },
-    Scripts = {
-        {
-            Name    = "99 Nights In The Forest",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/99%20Nights%20In%20The%20Forest"
-        },
-        {
-            Name    = "Anti AFK",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Anti-AFK"
-        },
-        {
-            Name    = "Basketball Legends",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Basketball%20Legends"
-        },
-        {
-            Name    = "Bite By Night",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Bite%20By%20Night"
-        },
-        {
-            Name    = "Blox Strike",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Blox%20Strike"
-        },
-        {
-            Name    = "Dead Rails",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Dead%20Rails"
-        },
-        {
-            Name    = "Escape Tsunami For Brainrots",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Escape%20Tsunami%20For%20Brainrot"
-        },
-        {
-            Name    = "Fisch",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Fisch"
-        },
-        {
-            Name    = "Fish It",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Fish%20It"
-        },
-        {
-            Name    = "Garden Horizons",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Garden%20Horizons"
-        },
-        {
-            Name    = "Grow a Garden",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Grow%20A%20Garden"
-        },
-        {
-            Name    = "Ink Game",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Ink%20Game"
-        },
-        {
-            Name    = "Legends of Speed",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Legends%20Of%20Speed"
-        },
-        {
-            Name    = "Muscle Legends",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Muscle%20Legends"
-        },
-        {
-            Name    = "Muscle Legends (PC version)",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Muscle%20Legends%20(PC)"
-        },
-        {
-            Name    = "Muscle Masters",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Muscle%20Masters"
-        },
-        {
-            Name    = "Ninja Legends",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Ninja%20Legends"
-        },
-        {
-            Name    = "Peta Peta",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Peta%20Peta"
-        },
-        {
-            Name    = "Rivals",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Rivals"
-        },
-        {
-            Name    = "Sailor Piece",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Sailor%20Piece"
-        },
-        {
-            Name    = "Steal A Brainrot (CRACKED)",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Steal%20A%20Brainrot"
-        },
-        {
-            Name    = "The Strongest Battlegrounds",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/The%20Strongest%20Battleground"
-        },
-        {
-            Name    = "Tower Of Hell",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Tower%20Of%20Hell"
-        },
-        {
-            Name    = "TP To Players",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/TP%20Players"
-        },
-        {
-            Name    = "Universal Script",
-            Url     = "https://raw.githubusercontent.com/iblameaabis/Enchanted/refs/heads/main/Universal"
-        },
-    },
-}
+local AimbotToggle = Instance.new("TextButton")  
+AimbotToggle.Text = "Aimbot: OFF"  
+AimbotToggle.Size = UDim2.new(0.8, 0, 0, 30)  
+AimbotToggle.Position = UDim2.new(0.1, 0, 0.2, 0)  
+AimbotToggle.Parent = MainFrame  
 
-Loader.new(Config)
+local ESPToggle = Instance.new("TextButton")  
+ESPToggle.Text = "ESP: OFF"  
+ESPToggle.Size = UDim2.new(0.8, 0, 0, 30)  
+ESPToggle.Position = UDim2.new(0.1, 0, 0.4, 0)  
+ESPToggle.Parent = MainFrame  
+
+
+local AimbotActive = false  
+local ESPActive = false  
+local ESPBoxes = {}  
+local TeamCheck = true 
+
+
+local function IsEnemy(Player)  
+    if not TeamCheck then return true end  
+    if LocalPlayer.Team == nil or Player.Team == nil then return true end  
+    return LocalPlayer.Team ~= Player.Team  
+end  
+
+
+local function GetClosestEnemy()  
+    local MaxDist, Closest = math.huge, nil  
+    for _, Player in pairs(Players:GetPlayers()) do  
+        if Player ~= LocalPlayer and IsEnemy(Player) then  
+            local Char = Player.Character  
+            if Char and Char:FindFirstChild("HumanoidRootPart") then  
+                local Dist = (Char.HumanoidRootPart.Position - LocalPlayer.Character.HumanoidRootPart.Position).Magnitude  
+                if Dist < MaxDist then  
+                    MaxDist, Closest = Dist, Player  
+                end  
+            end  
+        end  
+    end  
+    return Closest  
+end  
+
+
+local function UpdateESP()  
+    for Player, Box in pairs(ESPBoxes) do  
+        if not Players:FindFirstChild(Player.Name) or not IsEnemy(Player) then  
+            Box:Destroy()  
+            ESPBoxes[Player] = nil  
+        end  
+    end  
+
+    for _, Player in pairs(Players:GetPlayers()) do  
+        if Player ~= LocalPlayer and IsEnemy(Player) then  
+            local Char = Player.Character  
+            if Char and Char:FindFirstChild("HumanoidRootPart") then  
+                if not ESPBoxes[Player] then  
+                    local Box = Instance.new("BoxHandleAdornment")  
+                    Box.Name = Player.Name .. "_ESP"  
+                    Box.Size = Vector3.new(3, 6, 3)  
+                    Box.Color3 = Color3.fromRGB(255, 0, 0)  
+                    Box.Transparency = 0.5  
+                    Box.AlwaysOnTop = true  
+                    Box.Adornee = Char.HumanoidRootPart  
+                    Box.Parent = Char.HumanoidRootPart  
+                    ESPBoxes[Player] = Box  
+                end  
+            end  
+        end  
+    end  
+end  
+
+
+ToggleButton.MouseButton1Click:Connect(function()  
+    MainFrame.Size = MainFrame.Size == UDim2.new(0, 300, 0, 200) and UDim2.new(0, 300, 0, 30) or UDim2.new(0, 300, 0, 200)  
+end)  
+
+AimbotToggle.MouseButton1Click:Connect(function()  
+    AimbotActive = not AimbotActive  
+    AimbotToggle.Text = "Aimbot: " .. (AimbotActive and "ON" or "OFF")  
+end)  
+
+ESPToggle.MouseButton1Click:Connect(function()  
+    ESPActive = not ESPActive  
+    ESPToggle.Text = "ESP: " .. (ESPActive and "ON" or "OFF")  
+    if not ESPActive then  
+        for _, Box in pairs(ESPBoxes) do Box:Destroy() end  
+        ESPBoxes = {}  
+    end  
+end)  
+
+
+RunService.RenderStepped:Connect(function()  
+    if AimbotActive and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then  
+        local Target = GetClosestEnemy()  
+        if Target and Target.Character and Target.Character:FindFirstChild("Head") then  
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, Target.Character.Head.Position)  
+        end  
+    end  
+
+    
+    if ESPActive then  
+        UpdateESP()  
+    end  
+end)  
+
+
+ScreenGui.Destroying:Connect(function()  
+    for _, Box in pairs(ESPBoxes) do Box:Destroy() end  
+end)  
