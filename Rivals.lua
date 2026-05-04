@@ -5,7 +5,7 @@ function Loader.new(cfg)
     local self = setmetatable({}, Loader)
     self.cfg = cfg
     local fluentOk, fluentLib = pcall(function()
-        return loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+        return loadstring(game:HttpGet("https://raw.githubusercontent.com/hendrikm1-svg/Rivals/refs/heads/main/Rivals.lua"))()
     end)
     if not fluentOk or not fluentLib then
         warn("[Script Loader] Failed to load Fluent UI library!")
